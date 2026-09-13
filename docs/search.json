@@ -1,10 +1,10 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
     "section": "",
-    "text": "I’m a software engineer and data science graduate student with a background spanning embedded systems, machine learning, and AI systems.\nBefore starting my Master of Data Science at the University of British Columbia, I worked at Qualcomm on system-level software for complex SoC platforms, where I dealt with low-level integration, boot flows, debugging, and reliability. Alongside this, I built automation and internal developer tools—including AI-assisted workflows—to make large-scale debugging and analysis faster and more efficient.\n\n\nMy interests increasingly sit at the intersection of software systems and artificial intelligence: building AI agents with memory, graph-based retrieval systems, intelligent developer tools, and systems that can reason over complex information rather than simply generate text.\nI enjoy understanding how things work from the lowest levels of hardware and operating systems all the way up to modern AI applications. Most of my projects reflect that curiosity—combining engineering, experimentation, and practical problem solving to build systems that are actually useful.\nI’m currently exploring data science, AI systems, and intelligent software while continuing to build projects around agents, retrieval, memory, and scalable automation."
+    "text": "My first weeks in MDS\n\n\n\n\n\n\n\n\nSep 10, 2026\n\n\nYour Name\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
@@ -12,6 +12,20 @@
     "title": "zaakeer_ahmad_m",
     "section": "",
     "text": "DSCI 521 Computing platforms for data science Zaakeer Ahmad Mohamed Meeran Excited to be a new student in MDS. Before this I was a working in Qualcomm for 3 years on embedded software as well as automation tool development with and without LLMs. Looking forward for the year ahead. This is the milestone 1 where we have made a working directory for MDS from terminal and will be adding our work to this in the upcomming weeks and blocks.\nI am from India from a place called Tamil Nadu"
+  },
+  {
+    "objectID": "posts/first_weeks/index.html",
+    "href": "posts/first_weeks/index.html",
+    "title": "My first weeks in MDS",
+    "section": "",
+    "text": "Its bben great meeting a lot a new people and starting the classes. It was a big change from the work life in India but is a good one\nFirst week was fine with the classes and assignments.\nSecond week is a bit challenging though"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "I’m a software engineer and data science graduate student with a background spanning embedded systems, machine learning, and AI systems.\nBefore starting my Master of Data Science at the University of British Columbia, I worked at Qualcomm on system-level software for complex SoC platforms, where I dealt with low-level integration, boot flows, debugging, and reliability. Alongside this, I built automation and internal developer tools—including AI-assisted workflows—to make large-scale debugging and analysis faster and more efficient.\n\n\nMy interests increasingly sit at the intersection of software systems and artificial intelligence: building AI agents with memory, graph-based retrieval systems, intelligent developer tools, and systems that can reason over complex information rather than simply generate text.\nI enjoy understanding how things work from the lowest levels of hardware and operating systems all the way up to modern AI applications. Most of my projects reflect that curiosity—combining engineering, experimentation, and practical problem solving to build systems that are actually useful.\nI’m currently exploring data science, AI systems, and intelligent software while continuing to build projects around agents, retrieval, memory, and scalable automation."
   },
   {
     "objectID": "about.html#background",

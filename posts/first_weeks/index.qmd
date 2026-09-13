@@ -1,0 +1,11 @@
+---
+title: "My first weeks in MDS"
+author: "Your Name"
+date: 2026-09-10
+---
+![Orientation day on campus.](images/orientation.jpg){width=250px}
+Its bben great meeting a lot a new people and starting the classes. It was a big change from the work life in India but is a good one
+
+First week was fine with the classes and assignments.
+
+Second week is a bit challenging though
