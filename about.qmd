@@ -1,5 +1,14 @@
 ---
 title: "About"
 ---
+## Background
+I’m a software engineer and data science graduate student with a background spanning embedded systems, machine learning, and AI systems.
 
-About this site
+Before starting my Master of Data Science at the University of British Columbia, I worked at Qualcomm on system-level software for complex SoC platforms, where I dealt with low-level integration, boot flows, debugging, and reliability. Alongside this, I built automation and internal developer tools—including AI-assisted workflows—to make large-scale debugging and analysis faster and more efficient.
+
+### Interests
+My interests increasingly sit at the intersection of software systems and artificial intelligence: building AI agents with memory, graph-based retrieval systems, intelligent developer tools, and systems that can reason over complex information rather than simply generate text.
+
+I enjoy understanding how things work from the lowest levels of hardware and operating systems all the way up to modern AI applications. Most of my projects reflect that curiosity—combining engineering, experimentation, and practical problem solving to build systems that are actually useful.
+
+I’m currently exploring data science, AI systems, and intelligent software while continuing to build projects around agents, retrieval, memory, and scalable automation.
