@@ -1,0 +1,84 @@
+---
+title: "Palmer Penguins with R and Python"
+author: "Zaakeer Ahmad M"
+date: 2026-09-28
+---
+
+## Passing an object between languages
+
+This bonus post uses R and Python in the same Quarto document. 
+
+The data come from the
+[Palmer Penguins project](https://allisonhorst.github.io/palmerpenguins/) and
+are available under the
+[CC0 1.0 public-domain dedication](https://creativecommons.org/publicdomain/zero/1.0/).
+
+```{r}
+#| label: setup-mixed-analysis
+#| message: false
+#| warning: false
+
+library(dplyr)
+library(palmerpenguins)
+library(reticulate)
+
+project_python <- Sys.which("python")
+use_python(project_python, required = TRUE)
+```
+
+## Step 1: Compute a summary in R
+
+R calculates the mean body mass for each species. The resulting
+`species_mass_r` object will be made available to Python by `reticulate`.
+
+```{r}
+#| label: tbl-mass-summary-r
+#| tbl-cap: "Mean penguin body mass calculated in R."
+
+species_mass_r <- penguins |>
+  filter(!is.na(body_mass_g)) |>
+  group_by(species) |>
+  summarise(
+    mean_body_mass_g = round(mean(body_mass_g), 1),
+    .groups = "drop"
+  )
+
+species_mass_r
+```
+
+## Step 2: Use the R object in Python
+
+In a Python chunk, `r.species_mass_r` retrieves the object created by R.
+Python uses it to express every mean relative to the lightest species and
+stores the result as `species_mass_python`.
+
+```{python}
+#| label: tbl-relative-mass-python
+#| tbl-cap: "Relative mean body mass calculated in Python from the R object."
+
+species_mass_python = r.species_mass_r.copy()
+lightest_mean = species_mass_python["mean_body_mass_g"].min()
+species_mass_python["relative_to_lightest"] = (
+    species_mass_python["mean_body_mass_g"] / lightest_mean
+).round(2)
+
+species_mass_python
+```
+
+## Step 3: Return the Python result to R
+
+The `py$species_mass_python` expression brings the Python result back into R.
+This confirms that the same object moved from R to Python and then back to R.
+
+```{r}
+#| label: tbl-python-result-in-r
+#| tbl-cap: "The Python result read back into R."
+
+result_from_python <- py$species_mass_python
+result_from_python
+```
+
+Gentoo penguins have the largest mean body mass. Their mean is approximately
+1.37 times the mean for Adelie penguins, the lightest species in this group.
+This result was possible because the R summary was passed directly to Python
+rather than being written to and reread from a separate file.
