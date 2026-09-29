@@ -1,0 +1,151 @@
+---
+title: "Palmer Penguins: A Python Analysis"
+author: "Zaakeer Ahmad M"
+date: 2026-09-28
+---
+
+## Question and data
+
+This post asks how body mass and bill length differ among the three penguin
+species in the Palmer Penguins dataset. The data come from the
+[Palmer Penguins project](https://allisonhorst.github.io/palmerpenguins/) and
+were collected by Dr. Kristen Gorman and the Palmer Station, Antarctica LTER.
+The dataset is released under the
+[CC0 1.0 public-domain dedication](https://creativecommons.org/publicdomain/zero/1.0/).
+It is supplied by the `palmerpenguins` Python package, so no data file is
+downloaded while this post renders.
+
+## Data Preprocessing
+
+```{python}
+#| label: setup-python
+#| warning: false
+
+import pandas as pd
+from IPython.display import SVG, display
+from palmerpenguins import load_penguins
+```
+
+Removing rows with missing values
+
+```{python}
+#| label: clean-penguins-python
+
+penguins = load_penguins()
+analysis_penguins = penguins.dropna(
+    subset=["species", "bill_length_mm", "body_mass_g", "sex"]
+).copy()
+
+print(f"Rows in the original data: {len(penguins)}")
+print(f"Complete rows used in the analysis: {len(analysis_penguins)}")
+analysis_penguins.head()
+```
+
+
+
+## Compare the species
+
+Then we calculate the sample size and mean body measurements for each
+species.
+
+```{python}
+#| label: tbl-species-summary-python
+#| tbl-cap: "Sample size and mean body measurements by penguin species."
+
+species_summary = (
+    analysis_penguins.groupby("species", observed=True)
+    .agg(
+        n=("species", "size"),
+        mean_body_mass_g=("body_mass_g", "mean"),
+        mean_bill_length_mm=("bill_length_mm", "mean"),
+    )
+    .round(1)
+)
+
+species_summary
+```
+
+Gentoo penguins are much heavier on average: about 5,092 g compared with about
+3,706 g for Adelie and 3,733 g for Chinstrap penguins. Chinstrap penguins have
+the longest mean bill at approximately 48.8 mm.
+
+The following figure is generated directly from the summary table. It uses an
+inline SVG so that the analysis does not require an additional plotting
+package.
+
+```{python}
+#| label: fig-python-species-mass
+#| fig-cap: "Mean body mass of Palmer Penguins by species."
+#| warning: false
+
+plot_data = species_summary.reset_index()
+width, height = 700, 420
+left, top, plot_height = 90, 35, 300
+bar_width = 120
+gap = 80
+maximum = plot_data["mean_body_mass_g"].max()
+colours = ["#E69F00", "#56B4E9", "#009E73"]
+
+elements = [
+    f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
+    f'viewBox="0 0 {width} {height}">',
+    '<style>text { font-family: sans-serif; fill: #222; }</style>',
+    f'<line x1="{left}" y1="{top}" x2="{left}" y2="{top + plot_height}" '
+    'stroke="#333"/>',
+    f'<line x1="{left}" y1="{top + plot_height}" x2="{width - 35}" '
+    f'y2="{top + plot_height}" stroke="#333"/>',
+]
+
+for index, row in plot_data.iterrows():
+    x = left + 60 + index * (bar_width + gap)
+    bar_height = row["mean_body_mass_g"] / maximum * plot_height
+    y = top + plot_height - bar_height
+    elements.extend(
+        [
+            f'<rect x="{x}" y="{y:.1f}" width="{bar_width}" '
+            f'height="{bar_height:.1f}" fill="{colours[index]}"/>',
+            f'<text x="{x + bar_width / 2}" y="{y - 8:.1f}" '
+            f'text-anchor="middle">{row["mean_body_mass_g"]:.0f} g</text>',
+            f'<text x="{x + bar_width / 2}" y="{top + plot_height + 25}" '
+            f'text-anchor="middle">{row["species"]}</text>',
+        ]
+    )
+
+elements.extend(
+    [
+        f'<text x="20" y="{top + plot_height / 2}" '
+        'transform="rotate(-90 20 185)" text-anchor="middle">'
+        'Mean body mass (g)</text>',
+        '</svg>',
+    ]
+)
+
+display(SVG(data="".join(elements)))
+```
+
+To quantify those within-species trends, I calculate the correlation between
+bill length and body mass separately for each species.
+
+```{python}
+#| label: tbl-species-correlations-python
+#| tbl-cap: "Correlation between bill length and body mass within each species."
+
+species_correlations = (
+    analysis_penguins.groupby("species", observed=True)
+    .apply(
+        lambda group: group["bill_length_mm"].corr(group["body_mass_g"]),
+        include_groups=False,
+    )
+    .rename("correlation")
+    .round(3)
+    .to_frame()
+)
+
+species_correlations
+```
+
+Bill length and body mass are positively corelated within all three species.
+The relationship is strongest for Gentoo penguins (correlation 0.667), followed
+by Adelie (0.544) and Chinstrap penguins (0.514). Overall, species explains a
+difference in typical body mass, while bill length still provides useful
+information about how it is corealted with body mass within each species.

@@ -1,7 +1,7 @@
 ---
 title: "zaakeer_ahmad_m"
 ---
-![](images/profile.jpg){width=250px}
+![](/images/profile.jpg){width=250px}
 
 DSCI 521 Computing platforms for data science
 Zaakeer Ahmad Mohamed Meeran

@@ -4,7 +4,7 @@
     "href": "blog.html",
     "title": "Blog",
     "section": "",
-    "text": "My first weeks in MDS\n\n\n\n\n\n\n\n\nSep 10, 2026\n\n\nYour Name\n\n\n\n\n\nNo matching items"
+    "text": "Palmer Penguins: An R Analysis\n\n\n\n\n\n\n\n\nSep 28, 2026\n\n\nZaakeer Ahmad M\n\n\n\n\n\n\n\n\n\n\n\n\nPalmer Penguins: A Python Analysis\n\n\n\n\n\n\n\n\nSep 28, 2026\n\n\nZaakeer Ahmad M\n\n\n\n\n\n\n\n\n\n\n\n\nMy first weeks in MDS\n\n\n\n\n\n\n\n\nSep 10, 2026\n\n\nZaakeer Ahmad M\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
@@ -14,11 +14,67 @@
     "text": "DSCI 521 Computing platforms for data science Zaakeer Ahmad Mohamed Meeran Excited to be a new student in MDS. Before this I was a working in Qualcomm for 3 years on embedded software as well as automation tool development with and without LLMs. Looking forward for the year ahead. This is the milestone 1 where we have made a working directory for MDS from terminal and will be adding our work to this in the upcomming weeks and blocks.\nI am from India from a place called Tamil Nadu"
   },
   {
+    "objectID": "posts/r_analysis/index.html",
+    "href": "posts/r_analysis/index.html",
+    "title": "Palmer Penguins: An R Analysis",
+    "section": "",
+    "text": "This post examines how body mass and bill length vary across the three species in the Palmer Penguins dataset. The data come from the Palmer Penguins project and were collected by Dr. Kristen Gorman and the Palmer Station, Antarctica LTER. The dataset is released under the CC0 1.0 public-domain dedication. It is included in the palmerpenguins R package, so rendering this post does not download a separate data file."
+  },
+  {
+    "objectID": "posts/r_analysis/index.html#question-and-data",
+    "href": "posts/r_analysis/index.html#question-and-data",
+    "title": "Palmer Penguins: An R Analysis",
+    "section": "",
+    "text": "This post examines how body mass and bill length vary across the three species in the Palmer Penguins dataset. The data come from the Palmer Penguins project and were collected by Dr. Kristen Gorman and the Palmer Station, Antarctica LTER. The dataset is released under the CC0 1.0 public-domain dedication. It is included in the palmerpenguins R package, so rendering this post does not download a separate data file."
+  },
+  {
+    "objectID": "posts/r_analysis/index.html#prepare-the-data",
+    "href": "posts/r_analysis/index.html#prepare-the-data",
+    "title": "Palmer Penguins: An R Analysis",
+    "section": "Prepare the data",
+    "text": "Prepare the data\n\nlibrary(palmerpenguins)\nlibrary(tidyverse)\n\nRemoving rows with missing values\n\nanalysis_penguins &lt;- penguins |&gt;\n  drop_na(species, bill_length_mm, body_mass_g, sex)\n\ntibble(\n  original_rows = nrow(penguins),\n  complete_rows = nrow(analysis_penguins)\n)\n\n# A tibble: 1 × 2\n  original_rows complete_rows\n          &lt;int&gt;         &lt;int&gt;\n1           344           333"
+  },
+  {
+    "objectID": "posts/r_analysis/index.html#compare-the-species",
+    "href": "posts/r_analysis/index.html#compare-the-species",
+    "title": "Palmer Penguins: An R Analysis",
+    "section": "Compare the species",
+    "text": "Compare the species\nThen we calculate the sample size and mean body measurements for each species.\n\n\n\nTable 1: Sample size and mean body measurements by penguin species.\n\n\nspecies_summary &lt;- analysis_penguins |&gt;\n  group_by(species) |&gt;\n  summarise(\n    n = n(),\n    mean_body_mass_g = mean(body_mass_g),\n    mean_bill_length_mm = mean(bill_length_mm),\n    .groups = \"drop\"\n  ) |&gt;\n  mutate(across(starts_with(\"mean_\"), ~ round(.x, 1)))\n\nspecies_summary\n\n# A tibble: 3 × 4\n  species       n mean_body_mass_g mean_bill_length_mm\n  &lt;fct&gt;     &lt;int&gt;            &lt;dbl&gt;               &lt;dbl&gt;\n1 Adelie      146            3706.                38.8\n2 Chinstrap    68            3733.                48.8\n3 Gentoo      119            5092.                47.6\n\n\n\n\nGentoo penguins are substantially heavier on average: approximately 5,092 g, compared with 3,706 g for Adelie and 3,733 g for Chinstrap penguins. Chinstrap penguins have the longest mean bill at approximately 48.8 mm.\nThe figure compares bill length with body mass. Colour separates the species, making both the between-species differences and the within-species trends visible.\n\nggplot(\n  analysis_penguins,\n  aes(x = bill_length_mm, y = body_mass_g, colour = species)\n) +\n  geom_point(alpha = 0.75, size = 2) +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  labs(\n    x = \"Bill length (mm)\",\n    y = \"Body mass (g)\",\n    colour = \"Species\"\n  ) +\n  theme_minimal(base_size = 12)\n\n\n\n\n\n\n\nFigure 1: Bill length and body mass for Palmer Penguins, coloured by species.\n\n\n\n\n\nTo quantify those within-species trends, I calculate the correlation between bill length and body mass separately for each species.\n\n\n\nTable 2: Correlation between bill length and body mass within each species.\n\n\nspecies_correlations &lt;- analysis_penguins |&gt;\n  group_by(species) |&gt;\n  summarise(\n    correlation = cor(bill_length_mm, body_mass_g),\n    .groups = \"drop\"\n  ) |&gt;\n  mutate(correlation = round(correlation, 3))\n\nspecies_correlations\n\n# A tibble: 3 × 2\n  species   correlation\n  &lt;fct&gt;           &lt;dbl&gt;\n1 Adelie          0.544\n2 Chinstrap       0.514\n3 Gentoo          0.667\n\n\n\n\nBill length and body mass are positively corelated within all three species. The relationship is strongest for Gentoo penguins (correlation 0.667), followed by Adelie (0.544) and Chinstrap penguins (0.514). Overall, species explains a difference in typical body mass, while bill length still provides useful information about how it is corealted with body mass within each species."
+  },
+  {
     "objectID": "posts/first_weeks/index.html",
     "href": "posts/first_weeks/index.html",
     "title": "My first weeks in MDS",
     "section": "",
-    "text": "Its bben great meeting a lot a new people and starting the classes. It was a big change from the work life in India but is a good one\nFirst week was fine with the classes and assignments.\nSecond week is a bit challenging though"
+    "text": "Orientation day on campus\n\n\nIts been great meeting a lot a new people and starting the classes. It was a big change from the work life in India but is a good one\nFirst week was fine with the classes and assignments.\nSecond week is a bit challenging though"
+  },
+  {
+    "objectID": "posts/py_analysis/index.html",
+    "href": "posts/py_analysis/index.html",
+    "title": "Palmer Penguins: A Python Analysis",
+    "section": "",
+    "text": "This post asks how body mass and bill length differ among the three penguin species in the Palmer Penguins dataset. The data come from the Palmer Penguins project and were collected by Dr. Kristen Gorman and the Palmer Station, Antarctica LTER. The dataset is released under the CC0 1.0 public-domain dedication. It is supplied by the palmerpenguins Python package, so no data file is downloaded while this post renders."
+  },
+  {
+    "objectID": "posts/py_analysis/index.html#question-and-data",
+    "href": "posts/py_analysis/index.html#question-and-data",
+    "title": "Palmer Penguins: A Python Analysis",
+    "section": "",
+    "text": "This post asks how body mass and bill length differ among the three penguin species in the Palmer Penguins dataset. The data come from the Palmer Penguins project and were collected by Dr. Kristen Gorman and the Palmer Station, Antarctica LTER. The dataset is released under the CC0 1.0 public-domain dedication. It is supplied by the palmerpenguins Python package, so no data file is downloaded while this post renders."
+  },
+  {
+    "objectID": "posts/py_analysis/index.html#data-preprocessing",
+    "href": "posts/py_analysis/index.html#data-preprocessing",
+    "title": "Palmer Penguins: A Python Analysis",
+    "section": "Data Preprocessing",
+    "text": "Data Preprocessing\n\nimport pandas as pd\nfrom IPython.display import SVG, display\nfrom palmerpenguins import load_penguins\n\nRemoving rows with missing values\n\npenguins = load_penguins()\nanalysis_penguins = penguins.dropna(\n    subset=[\"species\", \"bill_length_mm\", \"body_mass_g\", \"sex\"]\n).copy()\n\nprint(f\"Rows in the original data: {len(penguins)}\")\nprint(f\"Complete rows used in the analysis: {len(analysis_penguins)}\")\nanalysis_penguins.head()\n\nRows in the original data: 344\nComplete rows used in the analysis: 333\n\n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\nyear\n\n\n\n\n0\nAdelie\nTorgersen\n39.1\n18.7\n181.0\n3750.0\nmale\n2007\n\n\n1\nAdelie\nTorgersen\n39.5\n17.4\n186.0\n3800.0\nfemale\n2007\n\n\n2\nAdelie\nTorgersen\n40.3\n18.0\n195.0\n3250.0\nfemale\n2007\n\n\n4\nAdelie\nTorgersen\n36.7\n19.3\n193.0\n3450.0\nfemale\n2007\n\n\n5\nAdelie\nTorgersen\n39.3\n20.6\n190.0\n3650.0\nmale\n2007"
+  },
+  {
+    "objectID": "posts/py_analysis/index.html#compare-the-species",
+    "href": "posts/py_analysis/index.html#compare-the-species",
+    "title": "Palmer Penguins: A Python Analysis",
+    "section": "Compare the species",
+    "text": "Compare the species\nThen we calculate the sample size and mean body measurements for each species.\n\nspecies_summary = (\n    analysis_penguins.groupby(\"species\", observed=True)\n    .agg(\n        n=(\"species\", \"size\"),\n        mean_body_mass_g=(\"body_mass_g\", \"mean\"),\n        mean_bill_length_mm=(\"bill_length_mm\", \"mean\"),\n    )\n    .round(1)\n)\n\nspecies_summary\n\n\n\nTable 1: Sample size and mean body measurements by penguin species.\n\n\n\n\n\n\n\n\n\n\nn\nmean_body_mass_g\nmean_bill_length_mm\n\n\nspecies\n\n\n\n\n\n\n\nAdelie\n146\n3706.2\n38.8\n\n\nChinstrap\n68\n3733.1\n48.8\n\n\nGentoo\n119\n5092.4\n47.6\n\n\n\n\n\n\n\n\n\n\nGentoo penguins are much heavier on average: about 5,092 g compared with about 3,706 g for Adelie and 3,733 g for Chinstrap penguins. Chinstrap penguins have the longest mean bill at approximately 48.8 mm.\nThe following figure is generated directly from the summary table. It uses an inline SVG so that the analysis does not require an additional plotting package.\n\nplot_data = species_summary.reset_index()\nwidth, height = 700, 420\nleft, top, plot_height = 90, 35, 300\nbar_width = 120\ngap = 80\nmaximum = plot_data[\"mean_body_mass_g\"].max()\ncolours = [\"#E69F00\", \"#56B4E9\", \"#009E73\"]\n\nelements = [\n    f'&lt;svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{width}\" height=\"{height}\" '\n    f'viewBox=\"0 0 {width} {height}\"&gt;',\n    '&lt;style&gt;text { font-family: sans-serif; fill: #222; }&lt;/style&gt;',\n    f'&lt;line x1=\"{left}\" y1=\"{top}\" x2=\"{left}\" y2=\"{top + plot_height}\" '\n    'stroke=\"#333\"/&gt;',\n    f'&lt;line x1=\"{left}\" y1=\"{top + plot_height}\" x2=\"{width - 35}\" '\n    f'y2=\"{top + plot_height}\" stroke=\"#333\"/&gt;',\n]\n\nfor index, row in plot_data.iterrows():\n    x = left + 60 + index * (bar_width + gap)\n    bar_height = row[\"mean_body_mass_g\"] / maximum * plot_height\n    y = top + plot_height - bar_height\n    elements.extend(\n        [\n            f'&lt;rect x=\"{x}\" y=\"{y:.1f}\" width=\"{bar_width}\" '\n            f'height=\"{bar_height:.1f}\" fill=\"{colours[index]}\"/&gt;',\n            f'&lt;text x=\"{x + bar_width / 2}\" y=\"{y - 8:.1f}\" '\n            f'text-anchor=\"middle\"&gt;{row[\"mean_body_mass_g\"]:.0f} g&lt;/text&gt;',\n            f'&lt;text x=\"{x + bar_width / 2}\" y=\"{top + plot_height + 25}\" '\n            f'text-anchor=\"middle\"&gt;{row[\"species\"]}&lt;/text&gt;',\n        ]\n    )\n\nelements.extend(\n    [\n        f'&lt;text x=\"20\" y=\"{top + plot_height / 2}\" '\n        'transform=\"rotate(-90 20 185)\" text-anchor=\"middle\"&gt;'\n        'Mean body mass (g)&lt;/text&gt;',\n        '&lt;/svg&gt;',\n    ]\n)\n\ndisplay(SVG(data=\"\".join(elements)))\n\n\n\n\n\n\n\nFigure 1: Mean body mass of Palmer Penguins by species.\n\n\n\n\n\nTo quantify those within-species trends, I calculate the correlation between bill length and body mass separately for each species.\n\nspecies_correlations = (\n    analysis_penguins.groupby(\"species\", observed=True)\n    .apply(\n        lambda group: group[\"bill_length_mm\"].corr(group[\"body_mass_g\"]),\n        include_groups=False,\n    )\n    .rename(\"correlation\")\n    .round(3)\n    .to_frame()\n)\n\nspecies_correlations\n\n\n\nTable 2: Correlation between bill length and body mass within each species.\n\n\n\n\n\n\n\n\n\n\ncorrelation\n\n\nspecies\n\n\n\n\n\nAdelie\n0.544\n\n\nChinstrap\n0.514\n\n\nGentoo\n0.667\n\n\n\n\n\n\n\n\n\n\nBill length and body mass are positively corelated within all three species. The relationship is strongest for Gentoo penguins (correlation 0.667), followed by Adelie (0.544) and Chinstrap penguins (0.514). Overall, species explains a difference in typical body mass, while bill length still provides useful information about how it is corealted with body mass within each species."
   },
   {
     "objectID": "about.html",

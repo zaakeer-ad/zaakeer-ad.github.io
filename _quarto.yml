@@ -9,7 +9,12 @@ website:
       - href: index.qmd
         text: Home
       - about.qmd
-      - blog.qmd
+      - href: blog.qmd
+        text: Blog
+      # - href: posts/py_analysis/index.qmd
+      #   text: py_analysis
+      # - href: posts/r_analysis/index.qmd
+      #   text: r_analysis
 
 format:
   html:

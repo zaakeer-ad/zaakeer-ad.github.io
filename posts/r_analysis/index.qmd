@@ -1,0 +1,115 @@
+---
+title: "Palmer Penguins: An R Analysis"
+author: "Zaakeer Ahmad M"
+date: 2026-09-28
+---
+
+## Question and data
+
+This post examines how body mass and bill length vary across the three species
+in the Palmer Penguins dataset. The data come from the
+[Palmer Penguins project](https://allisonhorst.github.io/palmerpenguins/) and
+were collected by Dr. Kristen Gorman and the Palmer Station, Antarctica LTER.
+The dataset is released under the
+[CC0 1.0 public-domain dedication](https://creativecommons.org/publicdomain/zero/1.0/).
+It is included in the `palmerpenguins` R package, so rendering this post does
+not download a separate data file.
+
+## Prepare the data
+
+
+```{r}
+#| label: setup-r
+#| message: false
+#| warning: false
+
+library(palmerpenguins)
+library(tidyverse)
+```
+
+Removing rows with missing values
+
+```{r}
+#| label: clean-penguins-r
+
+analysis_penguins <- penguins |>
+  drop_na(species, bill_length_mm, body_mass_g, sex)
+
+tibble(
+  original_rows = nrow(penguins),
+  complete_rows = nrow(analysis_penguins)
+)
+```
+
+## Compare the species
+
+Then we calculate the sample size and mean body measurements for each
+species.
+
+```{r}
+#| label: tbl-species-summary-r
+#| tbl-cap: "Sample size and mean body measurements by penguin species."
+
+species_summary <- analysis_penguins |>
+  group_by(species) |>
+  summarise(
+    n = n(),
+    mean_body_mass_g = mean(body_mass_g),
+    mean_bill_length_mm = mean(bill_length_mm),
+    .groups = "drop"
+  ) |>
+  mutate(across(starts_with("mean_"), ~ round(.x, 1)))
+
+species_summary
+```
+
+Gentoo penguins are substantially heavier on average: approximately 5,092 g,
+compared with 3,706 g for Adelie and 3,733 g for Chinstrap penguins. Chinstrap
+penguins have the longest mean bill at approximately 48.8 mm.
+
+The figure compares bill length with body mass. Colour separates the species,
+making both the between-species differences and the within-species trends
+visible.
+
+```{r}
+#| label: fig-r-bill-mass
+#| fig-cap: "Bill length and body mass for Palmer Penguins, coloured by species."
+#| warning: false
+
+ggplot(
+  analysis_penguins,
+  aes(x = bill_length_mm, y = body_mass_g, colour = species)
+) +
+  geom_point(alpha = 0.75, size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "Bill length (mm)",
+    y = "Body mass (g)",
+    colour = "Species"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+To quantify those within-species trends, I calculate the correlation between
+bill length and body mass separately for each species.
+
+```{r}
+#| label: tbl-species-correlations-r
+#| tbl-cap: "Correlation between bill length and body mass within each species."
+
+species_correlations <- analysis_penguins |>
+  group_by(species) |>
+  summarise(
+    correlation = cor(bill_length_mm, body_mass_g),
+    .groups = "drop"
+  ) |>
+  mutate(correlation = round(correlation, 3))
+
+species_correlations
+```
+
+Bill length and body mass are positively corelated within all three species.
+The relationship is strongest for Gentoo penguins (correlation 0.667), followed
+by Adelie (0.544) and Chinstrap penguins (0.514). Overall, species explains a
+difference in typical body mass, while bill length still provides useful
+information about how it is corealted with body mass within each species.
